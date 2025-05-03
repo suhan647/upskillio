@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Info, ArrowRight, AlertCircle, RotateCcw } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -23,6 +22,7 @@ interface CourseEditorProps {
   onSubmit?: () => void;
   onReset?: () => void;
   initialCode?: string;
+  height?: string;
 }
 
 const CourseEditor: React.FC<CourseEditorProps> = ({ 
@@ -33,7 +33,8 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
   onSkip,
   onSubmit,
   onReset,
-  initialCode = ""
+  initialCode = "",
+  height = "300px"
 }) => {
   const [showHints, setShowHints] = useState(false);
   
@@ -116,7 +117,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
           }}
           fontSize={14}
           width="100%"
-          height="300px"
+          height={height}
           showPrintMargin={false}
           className="font-mono"
         />

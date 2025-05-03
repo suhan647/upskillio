@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, SkipForward, Volume2, VolumeX, Info, Maximize2, Minimize2, Circle, Code, ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -23,6 +22,7 @@ interface CourseVideoPlayerProps {
   onToggleFullscreen?: () => void;
   onContinueFromKeyMoment?: () => void;
   resumeVideo?: boolean;
+  lastVideoTime?: number;
 }
 
 const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
@@ -34,7 +34,8 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
   isFullscreen = false,
   onToggleFullscreen,
   onContinueFromKeyMoment,
-  resumeVideo = false
+  resumeVideo = false,
+  lastVideoTime = 0
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -46,34 +47,33 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
   const [videoCompleted, setVideoCompleted] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [lastKeyMomentTime, setLastKeyMomentTime] = useState(0);
+  const [shouldResume, setShouldResume] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Initialize video duration
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (videoRef.current) {
-        setDuration(videoRef.current.duration || 90);
-      } else {
-        setDuration(90);
-      }
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, [videoUrl]);
-
-  // Effect to handle resumeVideo prop
-  useEffect(() => {
-    if (resumeVideo && lastKeyMomentTime > 0) {
-      if (videoRef.current) {
-        videoRef.current.currentTime = lastKeyMomentTime;
-        setCurrentTime(lastKeyMomentTime);
-        setIsPlaying(true);
-      }
+    if (videoRef.current) {
+      videoRef.current.addEventListener('loadedmetadata', () => {
+        setDuration(videoRef.current?.duration || 90);
+      });
     }
-  }, [resumeVideo, lastKeyMomentTime]);
+  }, []);
 
+  // Handle resumeVideo prop
+  useEffect(() => {
+    if (resumeVideo && lastVideoTime > 0 && videoRef.current) {
+      const resumeTime = lastVideoTime + 1;
+      videoRef.current.currentTime = resumeTime;
+      setCurrentTime(resumeTime);
+      setIsPlaying(true);
+      videoRef.current.play().catch(console.error);
+    }
+  }, [resumeVideo, lastVideoTime]);
+
+  // Handle video playback
   useEffect(() => {
     if (isPlaying) {
       videoRef.current?.play().catch(err => {
@@ -83,10 +83,11 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
       
       timerRef.current = setInterval(() => {
         if (videoRef.current) {
-          setCurrentTime(videoRef.current.currentTime);
+          const currentVideoTime = videoRef.current.currentTime;
+          setCurrentTime(currentVideoTime);
           
           const keyMoment = keyMoments.find(km => 
-            Math.abs(km.timeInSeconds - videoRef.current!.currentTime) < 1 &&
+            Math.abs(km.timeInSeconds - currentVideoTime) < 1 &&
             lastKeyMomentTime !== km.timeInSeconds
           );
           
@@ -99,14 +100,14 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
             onKeyMomentEncountered(keyMoment);
           }
           
-          if (videoRef.current.currentTime >= videoRef.current.duration && !videoCompleted) {
+          if (currentVideoTime >= videoRef.current.duration && !videoCompleted) {
             setIsPlaying(false);
             setVideoCompleted(true);
             toast.success("Video completed! You've finished the course.");
             onComplete();
           }
         }
-      }, 1000);
+      }, 100);
     } else {
       videoRef.current?.pause();
       
@@ -157,8 +158,12 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
     setShowKeyMomentModal(false);
     if (onContinueFromKeyMoment) {
       onContinueFromKeyMoment();
-    } else {
-      resumeVideoFromLastKeyMoment();
+    } else if (videoRef.current) {
+      const resumeTime = lastVideoTime + 1;
+      videoRef.current.currentTime = resumeTime;
+      setCurrentTime(resumeTime);
+      setIsPlaying(true);
+      videoRef.current.play().catch(console.error);
     }
   };
 
@@ -166,16 +171,12 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
     setShowKeyMomentModal(false);
     if (onContinueFromKeyMoment) {
       onContinueFromKeyMoment();
-    } else {
-      resumeVideoFromLastKeyMoment();
-    }
-  };
-
-  const resumeVideoFromLastKeyMoment = () => {
-    if (videoRef.current && lastKeyMomentTime > 0) {
-      videoRef.current.currentTime = lastKeyMomentTime;
-      setCurrentTime(lastKeyMomentTime);
+    } else if (videoRef.current) {
+      const resumeTime = lastVideoTime + 1;
+      videoRef.current.currentTime = resumeTime;
+      setCurrentTime(resumeTime);
       setIsPlaying(true);
+      videoRef.current.play().catch(console.error);
     }
   };
 
@@ -228,7 +229,7 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      <div className={`${isFullscreen ? 'h-[700px] max-h-[80vh]' : 'aspect-video'} bg-gradient-to-br from-upskilleo-dark-purple to-black relative`}>
+      <div className={`${isFullscreen ? 'h-[90%] max-h-[90vh]' : 'aspect-video'} bg-gradient-to-br from-upskilleo-dark-purple to-black relative`}>
         <div className="absolute inset-0 flex items-center justify-center">
           <video 
             ref={videoRef}
@@ -298,7 +299,7 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
               style={{ width: `${(currentTime / duration) * 100}%` }}
             ></div>
             
-            {keyMoments.map(moment => (
+            {keyMoments?.map(moment => (
               <div
                 key={moment.id}
                 className="absolute top-1/2 transform -translate-y-1/2 w-6 h-6 bg-transparent hover:w-7 hover:h-7 transition-all duration-300 cursor-pointer z-10 flex items-center justify-center"
@@ -307,6 +308,12 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
                   marginLeft: '-12px'
                 }}
                 title={`Challenge: ${moment.challenge}`}
+                onClick={() => {
+                  if (videoRef.current) {
+                    videoRef.current.currentTime = moment.timeInSeconds;
+                    setCurrentTime(moment.timeInSeconds);
+                  }
+                }}
               >
                 <Circle 
                   size={16} 

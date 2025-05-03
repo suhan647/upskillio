@@ -43,25 +43,208 @@ interface CourseSectionDetailProps {
 const keyMomentsMap = {
   default: [
     {
-      id: '1',
+      id: 'default-1',
       timeInSeconds: 15,
-      challenge: "Try implementing a function that checks if a number is even or odd.",
-      hints: ["Use the modulo operator (%) to check if a number is divisible by 2."],
-      solution: "function isEven(num) {\n  return num % 2 === 0;\n}"
+      challenge: "Welcome to the course! Let's get started with a basic challenge.",
+      hints: ["This is a default challenge to help you get familiar with the interface."],
+      solution: "// Default solution"
+    }
+  ],
+  html: [
+    {
+      id: 'html-1',
+      timeInSeconds: 15,
+      challenge: "Create a semantic HTML structure for a blog post with a header, main content, and footer.",
+      hints: [
+        "Use appropriate semantic HTML5 elements like <header>, <main>, <article>, and <footer>",
+        "Include a title, author information, and publication date in the header"
+      ],
+      solution: `<header>
+  <h1>My Blog Post</h1>
+  <div class="meta">
+    <span class="author">By John Doe</span>
+    <time datetime="2024-03-20">March 20, 2024</time>
+  </div>
+</header>
+<main>
+  <article>
+    <p>This is the main content of my blog post...</p>
+  </article>
+</main>
+<footer>
+  <p>© 2024 My Blog. All rights reserved.</p>
+</footer>`
     },
     {
-      id: '2',
+      id: 'html-2',
       timeInSeconds: 45,
-      challenge: "Write a function to capitalize the first letter of a string.",
-      hints: ["Use the string methods charAt(), slice(), and toUpperCase()."],
-      solution: "function capitalize(str) {\n  return str.charAt(0).toUpperCase() + str.slice(1);\n}"
+      challenge: "Create a responsive navigation menu with dropdown items.",
+      hints: [
+        "Use <nav> element with unordered list",
+        "Implement nested lists for dropdown items",
+        "Add appropriate ARIA attributes for accessibility"
+      ],
+      solution: `<nav aria-label="Main navigation">
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li>
+      <a href="/products">Products</a>
+      <ul>
+        <li><a href="/products/electronics">Electronics</a></li>
+        <li><a href="/products/clothing">Clothing</a></li>
+      </ul>
+    </li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul>
+</nav>`
+    }
+  ],
+  css: [
+    {
+      id: 'css-1',
+      timeInSeconds: 15,
+      challenge: "Create a responsive grid layout for a photo gallery.",
+      hints: [
+        "Use CSS Grid for the layout",
+        "Implement responsive breakpoints using media queries",
+        "Add hover effects for better user interaction"
+      ],
+      solution: `.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .gallery {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}`
     },
     {
-      id: '3',
-      timeInSeconds: 65,
-      challenge: "Implement a simple array filtering function.",
-      hints: ["Use the Array.filter() method to create a new array with elements that pass a test."],
-      solution: "function filterPositive(numbers) {\n  return numbers.filter(num => num > 0);\n}"
+      id: 'css-2',
+      timeInSeconds: 45,
+      challenge: "Create a responsive card component with hover effects.",
+      hints: [
+        "Use flexbox for the card layout",
+        "Implement smooth transitions for hover effects",
+        "Add a subtle shadow effect"
+      ],
+      solution: `.card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-description {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .card {
+    margin: 1rem;
+  }
+}`
+    }
+  ],
+  javascript: [
+    {
+      id: 'js-1',
+      timeInSeconds: 15,
+      challenge: "Create a function to handle form validation for an email input.",
+      hints: [
+        "Use regular expressions to validate email format",
+        "Return appropriate error messages for different validation cases",
+        "Handle both required field and format validation"
+      ],
+      solution: `function validateEmail(email) {
+  if (!email) {
+    return { isValid: false, message: 'Email is required' };
+  }
+  
+  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return { isValid: false, message: 'Please enter a valid email address' };
+  }
+  
+  return { isValid: true, message: 'Email is valid' };
+}`
+    },
+    {
+      id: 'js-2',
+      timeInSeconds: 45,
+      challenge: "Create a function to fetch and display data from an API.",
+      hints: [
+        "Use async/await for handling the API request",
+        "Implement error handling",
+        "Add loading state management"
+      ],
+      solution: `async function fetchUserData(userId) {
+  try {
+    const response = await fetch(\`https://api.example.com/users/\${userId}\`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data');
+    }
+    
+    const data = await response.json();
+    return {
+      success: true,
+      data: data,
+      error: null
+    };
+  } catch (error) {
+    return {
+      success: false,
+      data: null,
+      error: error.message
+    };
+  }
+}`
     }
   ]
 };
@@ -83,6 +266,7 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
   const [progress, setProgress] = useState(0);
   const [localModules, setLocalModules] = useState(modules);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [lastVideoTime, setLastVideoTime] = useState(0);
   
   const currentVideoKey = useRef(`module-${currentModuleIndex}-lesson-${currentLessonIndex}`);
 
@@ -124,14 +308,41 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
   };
 
   const getKeyMomentsForCurrentVideo = () => {
+    const currentModule = localModules[currentModuleIndex];
+    if (!currentModule) return keyMomentsMap.default;
+    
+    // Get the module title and convert it to lowercase for comparison
+    const moduleTitle = currentModule.title.toLowerCase();
+    
+    if (moduleTitle.includes('html')) {
+      return keyMomentsMap.html;
+    } else if (moduleTitle.includes('css')) {
+      return keyMomentsMap.css;
+    } else if (moduleTitle.includes('javascript')) {
+      return keyMomentsMap.javascript;
+    }
+    
     return keyMomentsMap.default;
   };
 
   const handleKeyMomentEncountered = (keyMoment: KeyMoment) => {
     setCurrentKeyMoment(keyMoment);
     setShowEditor(true);
-    setCode("// Write your solution here\nfunction isEven(num) {\n  // Your code here\n}");
-    setResumeVideo(false);
+    setLastVideoTime(keyMoment.timeInSeconds);
+    
+    // Set initial code based on the challenge type
+    if (keyMoment.id.startsWith('html')) {
+      setCode(`<!-- Write your HTML solution here -->
+${keyMoment.solution.split('\n')[0]}`);
+    } else if (keyMoment.id.startsWith('css')) {
+      setCode(`/* Write your CSS solution here */
+${keyMoment.solution.split('\n')[0]}`);
+    } else if (keyMoment.id.startsWith('js')) {
+      setCode(`// Write your JavaScript solution here
+${keyMoment.solution.split('\n')[0]}`);
+    } else {
+      setCode("// Write your solution here");
+    }
   };
 
   const handleSelectLesson = (moduleIndex: number, lessonIndex: number) => {
@@ -145,11 +356,20 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
 
   const handleSubmitCode = () => {
     setShowFeedback(true);
-    const isCorrect = code.includes(
-      currentKeyMoment?.id === '1' ? "return num % 2 === 0" :
-      currentKeyMoment?.id === '2' ? "return str.charAt(0).toUpperCase() + str.slice(1)" :
-      "return numbers.filter(num => num > 0)"
-    );
+    let isCorrect = false;
+    
+    if (currentKeyMoment) {
+      if (currentKeyMoment.id.startsWith('html')) {
+        // For HTML challenges, check if the code contains the main structural elements
+        isCorrect = code.includes(currentKeyMoment.solution.split('\n')[0].trim());
+      } else if (currentKeyMoment.id.startsWith('css')) {
+        // For CSS challenges, check if the code contains the main CSS properties
+        isCorrect = code.includes(currentKeyMoment.solution.split('\n')[0].trim());
+      } else if (currentKeyMoment.id.startsWith('js')) {
+        // For JavaScript challenges, check if the code contains the main function structure
+        isCorrect = code.includes(currentKeyMoment.solution.split('\n')[0].trim());
+      }
+    }
     
     if (isCorrect) {
       toast.success("Great job! Your solution is correct!");
@@ -165,6 +385,8 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
     setShowFeedback(false);
     setShowEditor(false);
     setResumeVideo(true);
+    
+    // Update the current lesson's progress
     const updatedModules = [...localModules];
     if (updatedModules[currentModuleIndex] && updatedModules[currentModuleIndex].lessons[currentLessonIndex]) {
       updatedModules[currentModuleIndex].lessons[currentLessonIndex].completed = true;
@@ -177,6 +399,14 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
     toast.info("Challenge skipped. Moving on to the next part.");
     setShowEditor(false);
     setResumeVideo(true);
+    
+    // Update the current lesson's progress
+    const updatedModules = [...localModules];
+    if (updatedModules[currentModuleIndex] && updatedModules[currentModuleIndex].lessons[currentLessonIndex]) {
+      updatedModules[currentModuleIndex].lessons[currentLessonIndex].completed = true;
+      setLocalModules(updatedModules);
+      calculateProgress(updatedModules);
+    }
   };
 
   const handleVideoComplete = () => {
@@ -216,7 +446,7 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
   const sampleVideoUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-muted/30">
+    <div className={`${isFullscreen ? 'fixed inset-0 h-[100vh] w-[100vw] overflow-hidden' : 'min-h-screen'} bg-gradient-to-b from-background via-background/95 to-muted/30`}>
       {!isFullscreen && (
         <>
           <div className="relative h-64 md:h-80 overflow-hidden">
@@ -282,8 +512,8 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
         </>
       )}
 
-      <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-background p-0 m-0' : 'container mx-auto px-4 md:px-6'} ${isFullscreen ? 'pt-0' : ''}`}>
-        <div className={`grid ${isFullscreen ? 'grid-cols-1' : 'md:grid-cols-12'} gap-6`}>
+      <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-background h-[100vh] w-[100vw]' : 'container mx-auto px-4 md:px-6'}`}>
+        <div className={`${isFullscreen ? 'h-[80vh] w-[100vw] flex flex-col' : 'grid md:grid-cols-12 gap-6'}`}>
           {!isFullscreen && (
             <div className="md:col-span-4 lg:col-span-3">
               <div className="bg-card rounded-lg border shadow-sm sticky top-24 transition-all hover:shadow-md">
@@ -305,9 +535,9 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
             </div>
           )}
           
-          <div className={`${isFullscreen ? 'col-span-full' : 'md:col-span-8 lg:col-span-9'}`}>
+          <div className={`${isFullscreen ? 'flex-1 flex flex-col h-[100vh]' : 'md:col-span-8 lg:col-span-9'}`}>
             {showEditor ? (
-              <div className={`animate-in fade-in-50 bg-card rounded-lg border shadow-sm ${isFullscreen ? 'max-h-screen flex flex-col' : ''}`}>
+              <div className={`${isFullscreen ? 'h-[100vh] w-[100vw] flex flex-col' : 'animate-in fade-in-50 bg-card rounded-lg border shadow-sm'}`}>
                 <div className="flex items-center justify-between p-4 border-b">
                   <h3 className="font-semibold text-lg">Coding Challenge</h3>
                   <div className="flex gap-2">
@@ -322,30 +552,18 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
                     >
                       <Video className="h-4 w-4" /> Back to Video
                     </Button>
-                    {!isFullscreen && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={toggleFullscreen}
-                        className="h-8 w-8"
-                      >
-                        <Maximize2 size={16} />
-                      </Button>
-                    )}
-                    {isFullscreen && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={toggleFullscreen}
-                        className="h-8 w-8"
-                      >
-                        <Minimize2 size={16} />
-                      </Button>
-                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={toggleFullscreen}
+                      className="h-8 w-8"
+                    >
+                      {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                    </Button>
                   </div>
                 </div>
                 
-                <div className={`p-6 ${isFullscreen ? 'flex-grow overflow-y-auto' : ''}`}>
+                <div className={`${isFullscreen ? 'flex-1 overflow-y-auto h-[calc(100vh-4rem)]' : 'p-6'}`}>
                   <div className="p-4 bg-muted rounded-md border mb-6">
                     <h4 className="font-medium mb-2">Your Challenge:</h4>
                     <p className="text-muted-foreground">{currentKeyMoment?.challenge}</p>
@@ -358,17 +576,14 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
                     hints={currentKeyMoment?.hints || []}
                     onSkip={handleSkipChallenge}
                     onSubmit={handleSubmitCode}
+                    height={isFullscreen ? "50vh" : "300px"}
                   />
                   
                   {showFeedback && (
                     <div className="mt-6">
                       <CourseFeedback
                         code={code}
-                        expectedSolution={
-                          currentKeyMoment?.id === '1' ? "return num % 2 === 0" :
-                          currentKeyMoment?.id === '2' ? "return str.charAt(0).toUpperCase() + str.slice(1)" :
-                          "return numbers.filter(num => num > 0)"
-                        }
+                        expectedSolution={currentKeyMoment?.solution || ""}
                         onClose={handleContinue}
                         onSkip={handleSkipChallenge}
                       />
@@ -377,7 +592,7 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
                 </div>
               </div>
             ) : (
-              <div className={`bg-card rounded-lg border shadow-sm transition-all hover:shadow-md ${isFullscreen ? 'h-full flex flex-col' : ''}`}>
+              <div className={`${isFullscreen ? 'h-[100vh] w-[100vw] flex flex-col' : 'bg-card rounded-lg border shadow-sm transition-all hover:shadow-md'}`}>
                 <div className="p-4 border-b flex items-center justify-between">
                   <h3 className="font-semibold text-lg flex items-center">
                     <Play className="text-primary h-4 w-4 mr-2" />
@@ -399,23 +614,26 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
                   </div>
                 </div>
                 
-                <div className={`p-6 ${isFullscreen ? 'flex-grow overflow-y-auto' : ''}`}>
+                <div className={`${isFullscreen ? 'flex-1 flex flex-col h-[calc(100vh-4rem)]' : 'p-6'}`}>
                   {!isFullscreen && (
                     <p className="text-muted-foreground mb-6">
                       {currentModule.description || "Welcome to this lesson. Please watch the video to continue your learning journey."}
                     </p>
                   )}
 
-                  <CourseVideoPlayer 
-                    videoUrl={sampleVideoUrl}
-                    keyMoments={getKeyMomentsForCurrentVideo()}
-                    onKeyMomentEncountered={handleKeyMomentEncountered}
-                    onComplete={handleVideoComplete}
-                    showVideo={true}
-                    isFullscreen={isFullscreen}
-                    onToggleFullscreen={toggleFullscreen}
-                    resumeVideo={resumeVideo}
-                  />
+                  <div className={`${isFullscreen ? 'flex-1 h-[calc(100vh-4rem)]' : ''}`}>
+                    <CourseVideoPlayer 
+                      videoUrl={sampleVideoUrl}
+                      keyMoments={getKeyMomentsForCurrentVideo()}
+                      onKeyMomentEncountered={handleKeyMomentEncountered}
+                      onComplete={handleVideoComplete}
+                      showVideo={true}
+                      isFullscreen={isFullscreen}
+                      onToggleFullscreen={toggleFullscreen}
+                      resumeVideo={resumeVideo}
+                      lastVideoTime={lastVideoTime}
+                    />
+                  </div>
                 </div>
               </div>
             )}
