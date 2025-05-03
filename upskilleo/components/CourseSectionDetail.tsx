@@ -17,6 +17,7 @@ interface KeyMoment {
   challenge: string;
   hints: string[];
   solution: string;
+  type: 'html' | 'css' | 'javascript' | 'typescript' | 'default';
 }
 
 interface Lesson {
@@ -40,14 +41,15 @@ interface CourseSectionDetailProps {
   modules: Module[];
 }
 
-const keyMomentsMap = {
+const keyMomentsMap: Record<string, KeyMoment[]> = {
   default: [
     {
       id: 'default-1',
       timeInSeconds: 15,
       challenge: "Welcome to the course! Let's get started with a basic challenge.",
       hints: ["This is a default challenge to help you get familiar with the interface."],
-      solution: "// Default solution"
+      solution: "// Default solution",
+      type: 'default' as const
     }
   ],
   html: [
@@ -73,7 +75,8 @@ const keyMomentsMap = {
 </main>
 <footer>
   <p>© 2024 My Blog. All rights reserved.</p>
-</footer>`
+</footer>`,
+      type: 'html' as const
     },
     {
       id: 'html-2',
@@ -97,7 +100,8 @@ const keyMomentsMap = {
     <li><a href="/about">About</a></li>
     <li><a href="/contact">Contact</a></li>
   </ul>
-</nav>`
+</nav>`,
+      type: 'html' as const
     }
   ],
   css: [
@@ -138,7 +142,8 @@ const keyMomentsMap = {
   .gallery {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
-}`
+}`,
+      type: 'css' as const
     },
     {
       id: 'css-2',
@@ -188,7 +193,8 @@ const keyMomentsMap = {
   .card {
     margin: 1rem;
   }
-}`
+}`,
+      type: 'css' as const
     }
   ],
   javascript: [
@@ -212,7 +218,8 @@ const keyMomentsMap = {
   }
   
   return { isValid: true, message: 'Email is valid' };
-}`
+}`,
+      type: 'javascript' as const
     },
     {
       id: 'js-2',
@@ -244,7 +251,8 @@ const keyMomentsMap = {
       error: error.message
     };
   }
-}`
+}`,
+      type: 'javascript' as const
     }
   ]
 };
@@ -572,7 +580,8 @@ ${keyMoment.solution.split('\n')[0]}`);
                   <CourseEditor 
                     code={code} 
                     onChange={setCode} 
-                    language="javascript" 
+                    language={currentKeyMoment?.type || 'javascript'}
+                    previewType={currentKeyMoment?.type || 'javascript'}
                     hints={currentKeyMoment?.hints || []}
                     onSkip={handleSkipChallenge}
                     onSubmit={handleSubmitCode}

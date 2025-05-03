@@ -10,6 +10,7 @@ interface KeyMoment {
   challenge: string;
   hints: string[];
   solution: string;
+  type: 'html' | 'css' | 'javascript' | 'typescript' | 'default';
 }
 
 interface CourseVideoPlayerProps {

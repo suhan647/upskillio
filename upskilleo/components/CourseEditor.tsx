@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Info, ArrowRight, AlertCircle, RotateCcw } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Info, ArrowRight, AlertCircle, RotateCcw, Eye, EyeOff, GripVertical } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import AceEditor from "react-ace";
 
@@ -23,6 +23,7 @@ interface CourseEditorProps {
   onReset?: () => void;
   initialCode?: string;
   height?: string;
+  previewType?: 'html' | 'css' | 'javascript' | 'typescript' | string;
 }
 
 const CourseEditor: React.FC<CourseEditorProps> = ({ 
@@ -34,9 +35,15 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
   onSubmit,
   onReset,
   initialCode = "",
-  height = "300px"
+  height = "300px",
+  previewType
 }) => {
   const [showHints, setShowHints] = useState(false);
+  const [showPreview, setShowPreview] = useState(true);
+  const [previewWidth, setPreviewWidth] = useState(400);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragHandleRef = useRef<HTMLDivElement>(null);
+  const initialCodeRef = useRef(initialCode || code);
   
   // Map language prop to Ace Editor mode
   const getAceMode = (lang: string) => {
@@ -53,11 +60,143 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
   };
 
   const handleReset = () => {
-    if (initialCode) {
-      onChange(initialCode);
-    }
+    onChange(initialCodeRef.current);
     if (onReset) {
       onReset();
+    }
+  };
+
+  // Handle drag functionality
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        const newWidth = window.innerWidth - e.clientX;
+        if (newWidth > 300 && newWidth < window.innerWidth - 300) {
+          setPreviewWidth(newWidth);
+        }
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
+
+  const renderPreview = () => {
+    if (!showPreview) return null;
+
+    const type = previewType || language.toLowerCase();
+
+    switch (type) {
+      case 'html':
+        return (
+          <div className="h-full w-full bg-white overflow-auto">
+            <div className="bg-white h-full">
+              <iframe
+                srcDoc={`
+                  <!DOCTYPE html>
+                  <html>
+                    <head>
+                      <style>
+                        body { margin: 0; padding: 0; }
+                        * { box-sizing: border-box; }
+                      </style>
+                    </head>
+                    <body>
+                      ${code}
+                    </body>
+                  </html>
+                `}
+                className="w-full h-full border-0"
+                sandbox="allow-scripts"
+              />
+            </div>
+          </div>
+        );
+      case 'css':
+        return (
+          <div className="h-full w-full bg-white overflow-auto">
+            <div className="text-sm text-muted-foreground mb-2 px-4">CSS Preview:</div>
+            <div className="bg-white h-full">
+              <iframe
+                srcDoc={`
+                  <!DOCTYPE html>
+                  <html>
+                    <head>
+                      <style>
+                        body { margin: 0; padding: 0; }
+                        * { box-sizing: border-box; }
+                        ${code}
+                      </style>
+                    </head>
+                    <body>
+                      <div class="preview-content">
+                        <div>
+                          <h3>Sample Heading</h3>
+                          <p>This is a sample paragraph to preview your CSS styles.</p>
+                        </div>
+                        <div>
+                          <button>Sample Button</button>
+                        </div>
+                      </div>
+                    </body>
+                  </html>
+                `}
+                className="w-full h-full border-0"
+                sandbox="allow-scripts"
+              />
+            </div>
+          </div>
+        );
+      case 'javascript':
+      case 'typescript':
+        return (
+          <div className="h-full w-full bg-black overflow-auto">
+            <div className="bg-black h-full">
+              <div className="text-sm font-mono">
+                <div className="px-4">
+                  <pre className="text-green-400 font-mono">
+                    {(() => {
+                      try {
+                        // Create a new function from the code
+                        const func = new Function(code);
+                        // Execute the function and capture console.log output
+                        let output = '';
+                        const originalConsoleLog = console.log;
+                        console.log = (...args) => {
+                          output += args.join(' ') + '\n';
+                        };
+                        func();
+                        console.log = originalConsoleLog;
+                        return output || 'No output';
+                      } catch (error) {
+                        return `Error: ${error.message}`;
+                      }
+                    })()}
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <div className="h-full w-full bg-white p-4 overflow-auto">
+            <div className="text-sm text-muted-foreground">
+              Preview not available for this language
+            </div>
+          </div>
+        );
     }
   };
 
@@ -78,6 +217,15 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
               {showHints ? 'Hide Hints' : 'Show Hints'}
             </Button>
           )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-muted-foreground"
+            onClick={() => setShowPreview(!showPreview)}
+          >
+            {showPreview ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
+            {showPreview ? 'Hide Preview' : 'Show Preview'}
+          </Button>
           <div className="text-xs text-muted-foreground">Editor</div>
         </div>
       </div>
@@ -99,28 +247,55 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
         </div>
       )}
       
-      {/* Ace Code Editor */}
-      <div className="w-full">
-        <AceEditor
-          mode={getAceMode(language)}
-          theme="monokai"
-          onChange={onChange}
-          value={code}
-          name="course-code-editor"
-          editorProps={{ $blockScrolling: true }}
-          setOptions={{
-            enableBasicAutocompletion: true,
-            enableLiveAutocompletion: true,
-            enableSnippets: true,
-            showLineNumbers: true,
-            tabSize: 2,
-          }}
-          fontSize={14}
-          width="100%"
-          height={height}
-          showPrintMargin={false}
-          className="font-mono"
-        />
+      {/* Editor and Preview Container */}
+      <div className="flex" style={{ height }}>
+        {/* Editor */}
+        <div className={`${showPreview ? 'w-[calc(100%-400px)]' : 'w-full'}`}>
+          <AceEditor
+            mode={getAceMode(language)}
+            theme="monokai"
+            onChange={onChange}
+            value={code}
+            name="course-code-editor"
+            editorProps={{ $blockScrolling: true }}
+            setOptions={{
+              enableBasicAutocompletion: true,
+              enableLiveAutocompletion: true,
+              enableSnippets: true,
+              showLineNumbers: true,
+              tabSize: 2,
+            }}
+            fontSize={14}
+            width="100%"
+            height="100%"
+            showPrintMargin={false}
+            className="font-mono"
+          />
+        </div>
+
+        {/* Preview Panel */}
+        {showPreview && (
+          <>
+            {/* Drag Handle */}
+            <div
+              ref={dragHandleRef}
+              className="w-1 bg-border cursor-col-resize hover:bg-primary/50 transition-colors"
+              onMouseDown={() => setIsDragging(true)}
+            >
+              <div className="h-full flex items-center justify-center">
+                <GripVertical className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </div>
+
+            {/* Preview Content */}
+            <div 
+              className="border-l bg-white"
+              style={{ width: `${previewWidth}px` }}
+            >
+              {renderPreview()}
+            </div>
+          </>
+        )}
       </div>
       
       {/* Action buttons */}

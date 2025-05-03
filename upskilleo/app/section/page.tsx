@@ -369,7 +369,7 @@ const SectionDetail = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
+        {/* <Navbar /> */}
         <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-muted/30 relative">
           {/* Background elements */}
           <div className="fixed inset-0 z-0 pointer-events-none">
@@ -409,7 +409,7 @@ const SectionDetail = () => {
             </div>
           </div>
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
   }
@@ -417,7 +417,7 @@ const SectionDetail = () => {
   if (!courseData) {
     return (
       <>
-        <Navbar />
+        {/* <Navbar /> */}
         <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-muted/30 relative">
           {/* Background elements */}
           <div className="fixed inset-0 z-0 pointer-events-none">
@@ -442,7 +442,7 @@ const SectionDetail = () => {
             </Card>
           </div>
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
   }
