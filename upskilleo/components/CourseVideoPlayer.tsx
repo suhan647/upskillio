@@ -222,7 +222,7 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
     <div 
       className={`relative bg-black overflow-hidden transition-all duration-300 
         ${isFullscreen 
-          ? 'fixed inset-0 z-50 w-screen h-screen' 
+          ? 'fixed inset-0 z-[10001] w-screen h-screen' 
           : 'w-full aspect-video rounded-lg'
         }`}
       ref={videoContainerRef}
@@ -289,7 +289,7 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
         )}
 
         <div 
-          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent px-4 py-6 transition-opacity duration-300 ${
+          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent px-4 py-6 transition-opacity duration-300 z-[10002] ${
             isHovering || !isPlaying ? "opacity-100" : "opacity-0"
           }`}
         >

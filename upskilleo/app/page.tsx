@@ -3,8 +3,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import CourseListing from '@/components/CourseListing';
 import CourseDetail from '@/components/CourseDetail';
 
@@ -14,13 +12,11 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
-      <Navbar />
       {courseId ? (
         <CourseDetail />
       ) : (
         <CourseListing />
       )}
-      <Footer />
     </main>
   );
 }

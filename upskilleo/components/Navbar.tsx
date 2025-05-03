@@ -64,7 +64,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full py-4 glass-morphism backdrop-blur-md bg-background/80 border-b border-border/40">
+    <nav className="sticky top-0 z-50 w-full py-4 glass-morphism backdrop-blur-md bg-background/80 border-b border-border/40 mb-10">
       <div className="container mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <span className="text-2xl font-bold text-gradient">Upskilleo</span>

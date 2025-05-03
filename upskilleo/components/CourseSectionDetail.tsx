@@ -446,7 +446,7 @@ ${keyMoment.solution.split('\n')[0]}`);
   const sampleVideoUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
   return (
-    <div className={`${isFullscreen ? 'fixed inset-0 h-[100vh] w-[100vw] overflow-hidden' : 'min-h-screen'} bg-gradient-to-b from-background via-background/95 to-muted/30`}>
+    <div className={`${isFullscreen ? 'fixed inset-0 h-[100vh] w-[100vw] overflow-hidden z-[9999]' : 'min-h-screen'} bg-gradient-to-b from-background via-background/95 to-muted/30`}>
       {!isFullscreen && (
         <>
           <div className="relative h-64 md:h-80 overflow-hidden">
@@ -512,7 +512,7 @@ ${keyMoment.solution.split('\n')[0]}`);
         </>
       )}
 
-      <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-background h-[100vh] w-[100vw]' : 'container mx-auto px-4 md:px-6'}`}>
+      <div className={`${isFullscreen ? 'fixed inset-0 z-[10000] bg-background h-[100vh] w-[100vw]' : 'container mx-auto px-4 md:px-6'}`}>
         <div className={`${isFullscreen ? 'h-[80vh] w-[100vw] flex flex-col' : 'grid md:grid-cols-12 gap-6'}`}>
           {!isFullscreen && (
             <div className="md:col-span-4 lg:col-span-3">

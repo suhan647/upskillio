@@ -449,13 +449,11 @@ const SectionDetail = () => {
   
   return (
     <>
-      <Navbar />
       <CourseSectionDetail 
         title={courseData.title}
         description={courseData.description}
         modules={courseData.modules}
       />
-      <Footer />
     </>
   );
 };
