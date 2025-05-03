@@ -1,0 +1,463 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client'
+import React, { useEffect, useState } from 'react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import CourseSectionDetail from '@/components/CourseSectionDetail';
+import { Skeleton } from "@/components/ui/skeleton"; 
+import { toast } from "sonner";
+import {  ChevronRight } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
+import { useRouter, useSearchParams } from 'next/navigation';
+
+// Sample data for demonstration
+const courseModules = {
+  "html-css": {
+    id: "module-html-css",
+    title: "HTML & CSS Foundations",
+    description: "Learn the building blocks of web development and how to style websites.",
+    modules: [
+      {
+        id: "module-1",
+        title: "HTML Basics",
+        description: "Essential HTML elements and structure",
+        lessons: [
+          {
+            id: "lesson-1-1",
+            title: "Introduction to HTML",
+            duration: "10 min",
+            completed: true,
+            locked: false
+          },
+          {
+            id: "lesson-1-2",
+            title: "HTML Document Structure",
+            duration: "15 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-1-3",
+            title: "Semantic HTML",
+            duration: "12 min",
+            completed: false,
+            locked: true
+          }
+        ]
+      },
+      {
+        id: "module-2",
+        title: "CSS Styling",
+        description: "How to style HTML elements with CSS",
+        lessons: [
+          {
+            id: "lesson-2-1",
+            title: "CSS Selectors",
+            duration: "8 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-2-2",
+            title: "Box Model",
+            duration: "14 min",
+            completed: false,
+            locked: true
+          },
+          {
+            id: "lesson-2-3",
+            title: "Flexbox Layout",
+            duration: "18 min",
+            completed: false,
+            locked: true
+          }
+        ]
+      }
+    ]
+  },
+  "javascript": {
+    id: "module-javascript",
+    title: "JavaScript Essentials",
+    description: "Master the core language of web development with practical exercises.",
+    modules: [
+      {
+        id: "module-1",
+        title: "JavaScript Fundamentals",
+        description: "Essential JavaScript concepts every developer should know",
+        lessons: [
+          {
+            id: "lesson-1-1",
+            title: "Variables and Data Types",
+            duration: "10 min",
+            completed: true,
+            locked: false
+          },
+          {
+            id: "lesson-1-2",
+            title: "Functions and Scope",
+            duration: "15 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-1-3",
+            title: "Objects and Arrays",
+            duration: "12 min",
+            completed: false,
+            locked: true
+          }
+        ]
+      },
+      {
+        id: "module-2",
+        title: "DOM Manipulation",
+        description: "Learn how to interact with the Document Object Model",
+        lessons: [
+          {
+            id: "lesson-2-1",
+            title: "Selecting Elements",
+            duration: "8 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-2-2",
+            title: "Modifying DOM Elements",
+            duration: "14 min",
+            completed: false,
+            locked: true
+          },
+          {
+            id: "lesson-2-3",
+            title: "Event Handling",
+            duration: "18 min",
+            completed: false,
+            locked: true
+          }
+        ]
+      }
+    ]
+  },
+  "react": {
+    id: "module-react",
+    title: "React Framework",
+    description: "Build interactive UIs with the popular React library and related tools.",
+    modules: [
+      {
+        id: "module-1",
+        title: "React Basics",
+        description: "Fundamental concepts of React",
+        lessons: [
+          {
+            id: "lesson-1-1",
+            title: "Components and Props",
+            duration: "12 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-1-2",
+            title: "State and Lifecycle",
+            duration: "15 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-1-3",
+            title: "Handling Events",
+            duration: "10 min",
+            completed: false,
+            locked: true
+          }
+        ]
+      },
+      {
+        id: "module-2",
+        title: "React Hooks",
+        description: "Use React Hooks to manage state and side effects",
+        lessons: [
+          {
+            id: "lesson-2-1",
+            title: "useState and useEffect",
+            duration: "14 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-2-2",
+            title: "Custom Hooks",
+            duration: "12 min",
+            completed: false,
+            locked: true
+          },
+          {
+            id: "lesson-2-3",
+            title: "Context API",
+            duration: "16 min",
+            completed: false,
+            locked: true
+          }
+        ]
+      }
+    ]
+  },
+  "advanced": {
+    id: "module-advanced",
+    title: "Advanced Frontend Concepts",
+    description: "Learn state management, performance optimization, and modern frontend architecture.",
+    modules: [
+      {
+        id: "module-1",
+        title: "State Management",
+        description: "Advanced state management techniques",
+        lessons: [
+          {
+            id: "lesson-1-1",
+            title: "Redux Fundamentals",
+            duration: "15 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-1-2",
+            title: "Redux Toolkit",
+            duration: "18 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-1-3",
+            title: "Context vs Redux",
+            duration: "12 min",
+            completed: false,
+            locked: true
+          }
+        ]
+      },
+      {
+        id: "module-2",
+        title: "Performance Optimization",
+        description: "Techniques to optimize React applications",
+        lessons: [
+          {
+            id: "lesson-2-1",
+            title: "React.memo and useMemo",
+            duration: "10 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-2-2",
+            title: "Code Splitting",
+            duration: "14 min",
+            completed: false,
+            locked: true
+          },
+          {
+            id: "lesson-2-3",
+            title: "Lazy Loading",
+            duration: "12 min",
+            completed: false,
+            locked: true
+          }
+        ]
+      }
+    ]
+  },
+  "node-basics": {
+    id: "module-node-basics",
+    title: "Node.js Fundamentals",
+    description: "Introduction to server-side JavaScript and the Node.js runtime.",
+    modules: [
+      {
+        id: "module-1",
+        title: "Node.js Introduction",
+        description: "Get started with Node.js",
+        lessons: [
+          {
+            id: "lesson-1-1",
+            title: "What is Node.js?",
+            duration: "8 min",
+            completed: true,
+            locked: false
+          },
+          {
+            id: "lesson-1-2",
+            title: "Modules and NPM",
+            duration: "12 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-1-3",
+            title: "File System Operations",
+            duration: "15 min",
+            completed: false,
+            locked: true
+          }
+        ]
+      },
+      {
+        id: "module-2",
+        title: "Asynchronous Programming",
+        description: "Learn how to write asynchronous code in Node.js",
+        lessons: [
+          {
+            id: "lesson-2-1",
+            title: "Callbacks and Promises",
+            duration: "14 min",
+            completed: false,
+            locked: false
+          },
+          {
+            id: "lesson-2-2",
+            title: "Async/Await",
+            duration: "12 min",
+            completed: false,
+            locked: true
+          },
+          {
+            id: "lesson-2-3",
+            title: "Event Emitters",
+            duration: "10 min",
+            completed: false,
+            locked: true
+          }
+        ]
+      }
+    ]
+  }
+};
+
+const SectionDetail = () => {
+  const searchParams = useSearchParams();
+  const sectionId:any = searchParams.get('sectionId');
+  console.log('params:', searchParams);
+  const router = useRouter();
+  const [courseData, setCourseData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Simulate loading state for a smoother transition
+    setLoading(true);
+    
+    // Delayed data fetch simulation
+    setTimeout(() => {
+      if (sectionId && courseModules[sectionId as keyof typeof courseModules]) {
+        const moduleData = courseModules[sectionId as keyof typeof courseModules];
+        setCourseData(moduleData);
+        
+        toast.success(`Started ${moduleData.title}`, {
+          description: "Interactive video and coding challenges are ready for you",
+          position: "bottom-right",
+        });
+      } else {
+        // If section not found, notify and redirect
+        toast.error("Section not found", {
+          description: "Redirecting to course list",
+          position: "bottom-right",
+        });
+        
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);
+      }
+      setLoading(false);
+    }, 800);
+  }, [sectionId, router]);
+  
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-muted/30 relative">
+          {/* Background elements */}
+          <div className="fixed inset-0 z-0 pointer-events-none">
+            <div className="absolute -top-20 -right-40 w-[40rem] h-[40rem] bg-upskilleo-purple/10 rounded-full blur-3xl transform-gpu"></div>
+            <div className="absolute top-1/3 -left-60 w-[35rem] h-[35rem] bg-blue-500/10 rounded-full blur-3xl transform-gpu"></div>
+            <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] bg-secondary/10 rounded-full blur-3xl transform-gpu"></div>
+          </div>
+          
+          <div className="container mx-auto py-16 px-4 sm:px-6 relative z-10">
+            <div className="max-w-6xl mx-auto">
+              {/* Skeleton Loading UI */}
+              <div className="h-64 mb-12 rounded-xl bg-card/50 animate-pulse relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/80"></div>
+                <div className="absolute bottom-8 left-8 space-y-4 w-2/3">
+                  <Skeleton className="h-10 w-3/4 bg-muted/50" />
+                  <Skeleton className="h-5 w-1/2 bg-muted/30" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-6 w-24 rounded-full bg-muted/20" />
+                    <Skeleton className="h-6 w-24 rounded-full bg-muted/20" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-12 gap-6">
+                <div className="md:col-span-4 lg:col-span-3">
+                  <Skeleton className="h-[calc(100vh-300px)] rounded-lg bg-card/50" />
+                </div>
+                <div className="md:col-span-8 lg:col-span-9">
+                  <Skeleton className="h-96 rounded-lg bg-card/50" />
+                  <div className="mt-4 space-y-3">
+                    <Skeleton className="h-4 w-full bg-muted/30" />
+                    <Skeleton className="h-4 w-5/6 bg-muted/30" />
+                    <Skeleton className="h-4 w-4/6 bg-muted/30" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+  
+  if (!courseData) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-muted/30 relative">
+          {/* Background elements */}
+          <div className="fixed inset-0 z-0 pointer-events-none">
+            <div className="absolute -top-20 -right-40 w-[40rem] h-[40rem] bg-upskilleo-purple/10 rounded-full blur-3xl transform-gpu"></div>
+            <div className="absolute top-1/3 -left-60 w-[35rem] h-[35rem] bg-blue-500/10 rounded-full blur-3xl transform-gpu"></div>
+          </div>
+          
+          <div className="container mx-auto py-16 px-4 relative z-10 flex flex-col items-center justify-center">
+            <Card className="max-w-md w-full bg-card/95 backdrop-blur-sm">
+              <CardContent className="p-6 text-center">
+                <h1 className="text-2xl font-bold mb-3">Section not found</h1>
+                <p className="text-muted-foreground mb-6">The requested section does not exist or could not be loaded.</p>
+                <div className="flex justify-center">
+                  <button 
+                    onClick={() => router.push('/')}
+                    className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  >
+                    <ChevronRight className="mr-2 h-4 w-4" /> Return to Home
+                  </button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+  
+  return (
+    <>
+      <Navbar />
+      <CourseSectionDetail 
+        title={courseData.title}
+        description={courseData.description}
+        modules={courseData.modules}
+      />
+      <Footer />
+    </>
+  );
+};
+
+export default SectionDetail;
