@@ -61,7 +61,7 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
         setDuration(videoRef.current?.duration || 90);
       });
     }
-  }, []);
+  }, [videoUrl]);
 
   // Handle resumeVideo prop
   useEffect(() => {
@@ -87,24 +87,27 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
           const currentVideoTime = videoRef.current.currentTime;
           setCurrentTime(currentVideoTime);
           
-          const keyMoment = keyMoments.find(km => 
-            Math.abs(km.timeInSeconds - currentVideoTime) < 1 &&
-            lastKeyMomentTime !== km.timeInSeconds
-          );
-          
-          if (keyMoment) {
-            setIsPlaying(false);
-            videoRef.current.pause();
-            setCurrentKeyMoment(keyMoment);
-            setShowKeyMomentModal(true);
-            setLastKeyMomentTime(keyMoment.timeInSeconds);
-            onKeyMomentEncountered(keyMoment);
+          // Check for key moments
+          if (keyMoments && keyMoments.length > 0) {
+            const keyMoment = keyMoments.find(km => 
+              Math.abs(km.timeInSeconds - currentVideoTime) < 1 &&
+              lastKeyMomentTime !== km.timeInSeconds
+            );
+            
+            if (keyMoment) {
+              setIsPlaying(false);
+              videoRef.current.pause();
+              setCurrentKeyMoment(keyMoment);
+              setShowKeyMomentModal(true);
+              setLastKeyMomentTime(keyMoment.timeInSeconds);
+              onKeyMomentEncountered(keyMoment);
+            }
           }
           
           if (currentVideoTime >= videoRef.current.duration && !videoCompleted) {
             setIsPlaying(false);
             setVideoCompleted(true);
-            toast.success("Video completed! You've finished the course.");
+            toast.success("Video completed! You've finished the lesson.");
             onComplete();
           }
         }
@@ -221,12 +224,8 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
 
   return (
     <div 
-      className={`relative bg-black overflow-hidden transition-all duration-300 
-        ${isFullscreen 
-          ? 'fixed inset-0 z-[10001] w-screen h-screen' 
-          : 'w-full aspect-video rounded-lg'
-        }`}
       ref={videoContainerRef}
+      className="relative w-full h-full"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -234,7 +233,7 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
         <div className="absolute inset-0 flex items-center justify-center">
           <video 
             ref={videoRef}
-            src={sampleVideoUrl}
+            src={videoUrl}
             className={`w-full h-full object-cover opacity-95 transition-transform duration-1000 ease-in-out transform hover:scale-105 ${isFullscreen ? 'object-contain' : 'object-cover'}`}
             poster="https://images.unsplash.com/photo-1551033406-611cf9a28f67?auto=format&fit=crop&w=800&q=80"
             controls={false}
@@ -324,96 +323,70 @@ const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
               </div>
             ))}
           </div>
-
-          <div className="flex items-center gap-3 flex-wrap px-2 w-full overflow-visible">
-            <div className="flex items-center gap-2">
+          
+          <div className="flex items-center justify-between px-2">
+            <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="text-white hover:bg-white/20 h-9 w-9 rounded-full transition-transform hover:scale-110"
                 onClick={togglePlayback}
+                className="h-8 w-8"
               >
-                {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+                {isPlaying ? <Pause size={16} /> : <Play size={16} />}
               </Button>
               
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-white hover:bg-white/20 h-9 w-9 rounded-full transition-transform hover:scale-110"
-                onClick={() => {
-                  setCurrentTime(prev => Math.min(prev + 10, duration));
-                  if (videoRef.current) {
-                    videoRef.current.currentTime = Math.min(videoRef.current.currentTime + 10, duration);
-                  }
-                  if (currentTime + 10 >= duration) {
-                    setVideoCompleted(true);
-                    onComplete();
-                  }
-                }}
-              >
-                <SkipForward size={20} />
-              </Button>
-              
-              <div className="text-white text-sm flex items-center gap-1 min-w-[80px]">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </div>
-            </div>
-            
-            
-            
-            <div className="flex-grow px-2 hidden sm:block">
-              <Slider
-                value={[currentTime]}
-                min={0}
-                max={duration}
-                step={1}
-                onValueChange={(value) => {
-                  handleSeek(value);
-                  if (videoRef.current) {
-                    videoRef.current.currentTime = value[0];
-                  }
-                }}
-                className="cursor-pointer"
-              />
-            </div>
-            
-            <div className="flex items-center gap-2 ml-auto">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-white hover:bg-white/20 h-9 w-9 rounded-full transition-transform hover:scale-110"
-                onClick={toggleMute}
-              >
-                {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-              </Button>
-              
-              <div className="w-20 hidden sm:block">
-                <Slider
-                  value={[isMuted ? 0 : volume]}
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  onValueChange={handleVolumeChange}
-                  className="cursor-pointer"
-                />
-              </div>
-              
-              {onToggleFullscreen && (
+              <div className="flex items-center gap-2">
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="text-white hover:bg-white/20 h-9 w-9 rounded-full transition-transform hover:scale-110"
-                  onClick={onToggleFullscreen}
+                  onClick={toggleMute}
+                  className="h-8 w-8"
                 >
-                  {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                  {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                </Button>
+                
+                <Slider
+                  value={[volume * 100]}
+                  onValueChange={(value) => handleVolumeChange([value[0] / 100])}
+                  max={100}
+                  step={1}
+                  className="w-24"
+                />
+              </div>
+              
+              <span className="text-sm text-white/80">
+                {formatTime(currentTime)} / {formatTime(duration)}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              {onToggleFullscreen && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onToggleFullscreen}
+                  className="h-8 w-8"
+                >
+                  {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
                 </Button>
               )}
             </div>
           </div>
-          
-          <div className="flex justify-between text-xs text-white/70 mt-1 px-2 sm:hidden">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
+
+          <div className="flex-grow px-2 mt-2">
+            <Slider
+              value={[currentTime]}
+              min={0}
+              max={duration}
+              step={1}
+              onValueChange={(value) => {
+                if (videoRef.current) {
+                  videoRef.current.currentTime = value[0];
+                  setCurrentTime(value[0]);
+                }
+              }}
+              className="cursor-pointer"
+            />
           </div>
         </div>
       </div>

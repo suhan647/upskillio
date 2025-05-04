@@ -26,6 +26,8 @@ interface Lesson {
   duration: string;
   completed: boolean;
   locked: boolean;
+  keyMoments?: KeyMoment[];
+  videoUrl?: string;
 }
 
 interface Module {
@@ -268,7 +270,7 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
   const [currentLessonIndex, setCurrentLessonIndex] = useState(lessonParam ? parseInt(lessonParam) : 0);
   const [showEditor, setShowEditor] = useState(false);
   const [resumeVideo, setResumeVideo] = useState(false);
-  const [code, setCode] = useState("// Write your solution here\nfunction isEven(num) {\n  // Your code here\n}");
+  const [code, setCode] = useState("// Write your solution here");
   const [showFeedback, setShowFeedback] = useState(false);
   const [currentKeyMoment, setCurrentKeyMoment] = useState<KeyMoment | null>(null);
   const [progress, setProgress] = useState(0);
@@ -317,20 +319,22 @@ const CourseSectionDetail: React.FC<CourseSectionDetailProps> = ({
 
   const getKeyMomentsForCurrentVideo = () => {
     const currentModule = localModules[currentModuleIndex];
-    if (!currentModule) return keyMomentsMap.default;
+    if (!currentModule) return [];
     
-    // Get the module title and convert it to lowercase for comparison
-    const moduleTitle = currentModule.title.toLowerCase();
+    const currentLesson = currentModule.lessons[currentLessonIndex];
+    if (!currentLesson || !currentLesson.keyMoments) return [];
     
-    if (moduleTitle.includes('html')) {
-      return keyMomentsMap.html;
-    } else if (moduleTitle.includes('css')) {
-      return keyMomentsMap.css;
-    } else if (moduleTitle.includes('javascript')) {
-      return keyMomentsMap.javascript;
-    }
+    return currentLesson.keyMoments;
+  };
+
+  const getCurrentVideoUrl = () => {
+    const currentModule = localModules[currentModuleIndex];
+    if (!currentModule) return "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     
-    return keyMomentsMap.default;
+    const currentLesson = currentModule.lessons[currentLessonIndex];
+    if (!currentLesson || !currentLesson.videoUrl) return "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+    
+    return currentLesson.videoUrl;
   };
 
   const handleKeyMomentEncountered = (keyMoment: KeyMoment) => {
@@ -451,8 +455,6 @@ ${keyMoment.solution.split('\n')[0]}`);
   const currentModule = localModules[currentModuleIndex] || { title: '', lessons: [], description: '' };
   const currentLesson = currentModule.lessons[currentLessonIndex] || { title: 'Introduction' };
   
-  const sampleVideoUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-
   return (
     <div className={`${isFullscreen ? 'fixed inset-0 h-[100vh] w-[100vw] overflow-hidden z-[9999]' : 'min-h-screen'} bg-gradient-to-b from-background via-background/95 to-muted/30`}>
       {!isFullscreen && (
@@ -632,7 +634,7 @@ ${keyMoment.solution.split('\n')[0]}`);
 
                   <div className={`${isFullscreen ? 'flex-1 h-[calc(100vh-4rem)]' : ''}`}>
                     <CourseVideoPlayer 
-                      videoUrl={sampleVideoUrl}
+                      videoUrl={getCurrentVideoUrl()}
                       keyMoments={getKeyMomentsForCurrentVideo()}
                       onKeyMomentEncountered={handleKeyMomentEncountered}
                       onComplete={handleVideoComplete}

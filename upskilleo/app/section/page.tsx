@@ -14,34 +14,69 @@ import { useRouter, useSearchParams } from 'next/navigation';
 const courseModules = {
   "html-css": {
     id: "module-html-css",
-    title: "HTML & CSS Foundations",
-    description: "Learn the building blocks of web development and how to style websites.",
+    title: "HTML & CSS Fundamentals",
+    description: "Learn the building blocks of web development with hands-on exercises.",
     modules: [
       {
         id: "module-1",
         title: "HTML Basics",
-        description: "Essential HTML elements and structure",
+        description: "Learn the fundamentals of HTML",
         lessons: [
           {
             id: "lesson-1-1",
-            title: "Introduction to HTML",
+            title: "HTML Document Structure",
             duration: "10 min",
-            completed: true,
-            locked: false
+            completed: false,
+            locked: false,
+            videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            keyMoments: [
+              {
+                id: 'html-structure-1',
+                timeInSeconds: 15,
+                challenge: "Create a basic HTML5 document structure",
+                hints: [
+                  "Use the DOCTYPE declaration",
+                  "Include html, head, and body tags",
+                  "Add a title in the head section"
+                ],
+                solution: `<!DOCTYPE html>
+<html>
+<head>
+  <title>My First Page</title>
+</head>
+<body>
+  <h1>Hello World</h1>
+</body>
+</html>`,
+                type: 'html'
+              }
+            ]
           },
           {
             id: "lesson-1-2",
-            title: "HTML Document Structure",
-            duration: "15 min",
-            completed: false,
-            locked: false
-          },
-          {
-            id: "lesson-1-3",
-            title: "Semantic HTML",
+            title: "HTML Elements and Attributes",
             duration: "12 min",
-            completed: false,
-            locked: true
+            completed: true,
+            locked: false,
+            videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            keyMoments: [
+              {
+                id: 'html-elements-1',
+                timeInSeconds: 20,
+                challenge: "Create a form with input fields",
+                hints: [
+                  "Use the form element",
+                  "Add text and email input fields",
+                  "Include a submit button"
+                ],
+                solution: `<form>
+  <input type="text" placeholder="Name">
+  <input type="email" placeholder="Email">
+  <button type="submit">Submit</button>
+</form>`,
+                type: 'html'
+              }
+            ]
           }
         ]
       },
@@ -55,21 +90,60 @@ const courseModules = {
             title: "CSS Selectors",
             duration: "8 min",
             completed: false,
-            locked: false
+            locked: false,
+            videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            keyMoments: [
+              {
+                id: 'css-selectors-1',
+                timeInSeconds: 15,
+                challenge: "Style elements using different selectors",
+                hints: [
+                  "Use class and ID selectors",
+                  "Apply different colors to elements",
+                  "Use the universal selector for reset"
+                ],
+                solution: `* {
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  background-color: #f0f0f0;
+}
+
+#main-title {
+  color: #333;
+}`,
+                type: 'css'
+              }
+            ]
           },
           {
             id: "lesson-2-2",
             title: "Box Model",
             duration: "14 min",
             completed: false,
-            locked: true
-          },
-          {
-            id: "lesson-2-3",
-            title: "Flexbox Layout",
-            duration: "18 min",
-            completed: false,
-            locked: true
+            locked: true,
+            videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            keyMoments: [
+              {
+                id: 'box-model-1',
+                timeInSeconds: 25,
+                challenge: "Create a card with proper spacing",
+                hints: [
+                  "Use margin and padding",
+                  "Add a border",
+                  "Include a box shadow"
+                ],
+                solution: `.card {
+  margin: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}`,
+                type: 'css'
+              }
+            ]
           }
         ]
       }
@@ -90,21 +164,49 @@ const courseModules = {
             title: "Variables and Data Types",
             duration: "10 min",
             completed: true,
-            locked: false
+            locked: false,
+            videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            keyMoments: [
+              {
+                id: 'js-variables-1',
+                timeInSeconds: 15,
+                challenge: "Create variables with different data types",
+                hints: [
+                  "Use let and const",
+                  "Create string, number, and boolean variables",
+                  "Use template literals"
+                ],
+                solution: `let name = "John";
+const age = 25;
+let isStudent = true;
+console.log(\`\${name} is \${age} years old\`);`,
+                type: 'javascript'
+              }
+            ]
           },
           {
             id: "lesson-1-2",
             title: "Functions and Scope",
             duration: "15 min",
             completed: false,
-            locked: false
-          },
-          {
-            id: "lesson-1-3",
-            title: "Objects and Arrays",
-            duration: "12 min",
-            completed: false,
-            locked: true
+            locked: false,
+            videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            keyMoments: [
+              {
+                id: 'js-functions-1',
+                timeInSeconds: 20,
+                challenge: "Create a function that calculates the area of a rectangle",
+                hints: [
+                  "Use function declaration",
+                  "Take width and height as parameters",
+                  "Return the calculated area"
+                ],
+                solution: `function calculateArea(width, height) {
+  return width * height;
+}`,
+                type: 'javascript'
+              }
+            ]
           }
         ]
       },
