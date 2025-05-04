@@ -44,6 +44,8 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const dragHandleRef = useRef<HTMLDivElement>(null);
   const initialCodeRef = useRef(initialCode || code);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(0);
   
   // Map language prop to Ace Editor mode
   const getAceMode = (lang: string) => {
@@ -66,31 +68,30 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
     }
   };
 
-  // Handle drag functionality
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (isDragging) {
-        const newWidth = window.innerWidth - e.clientX;
-        if (newWidth > 300 && newWidth < window.innerWidth - 300) {
-          setPreviewWidth(newWidth);
-        }
-      }
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
-
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+  // Drag logic: listeners only attached while dragging
+  const handleMouseMove = (e: MouseEvent) => {
+    const deltaX = e.clientX - startXRef.current;
+    const newWidth = startWidthRef.current - deltaX;
+    if (newWidth > 300 && newWidth < window.innerWidth - 300) {
+      setPreviewWidth(newWidth);
     }
+  };
 
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging]);
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    document.body.style.cursor = 'default';
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    startXRef.current = e.clientX;
+    startWidthRef.current = previewWidth;
+    document.body.style.cursor = 'col-resize';
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
 
   const renderPreview = () => {
     if (!showPreview) return null;
@@ -202,6 +203,21 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
 
   return (
     <div className="rounded-md border overflow-hidden shadow-md">
+      {/* Overlay for drag events */}
+      {isDragging && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 9999,
+            cursor: 'col-resize',
+            background: 'transparent',
+          }}
+        />
+      )}
       {/* Header with language indicator */}
       <div className="bg-muted px-3 py-2 border-b flex items-center justify-between">
         <div className="text-sm font-medium">{language.charAt(0).toUpperCase() + language.slice(1)}</div>
@@ -250,7 +266,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
       {/* Editor and Preview Container */}
       <div className="flex" style={{ height }}>
         {/* Editor */}
-        <div className={`${showPreview ? 'w-[calc(100%-400px)]' : 'w-full'}`}>
+        <div style={{ width: showPreview ? `calc(100% - ${previewWidth}px)` : '100%' }}>
           <AceEditor
             mode={getAceMode(language)}
             theme="monokai"
@@ -280,7 +296,8 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
             <div
               ref={dragHandleRef}
               className="w-1 bg-border cursor-col-resize hover:bg-primary/50 transition-colors"
-              onMouseDown={() => setIsDragging(true)}
+              style={{ userSelect: 'none' }}
+              onMouseDown={handleMouseDown}
             >
               <div className="h-full flex items-center justify-center">
                 <GripVertical className="h-4 w-4 text-muted-foreground" />
