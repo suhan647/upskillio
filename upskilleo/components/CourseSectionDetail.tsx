@@ -591,51 +591,7 @@ ${keyMoment.solution.split('\n')[0]}`);
                     height={isFullscreen ? "50vh" : "300px"}
                   /> */}
 
-<MultiLanguageCourseEditor
-  files={[
-    {
-      type: 'html',
-      challenges: [
-        {
-          id: 'html-1',
-          title: 'Create a Form',
-          description: 'Build an HTML form',
-          initialCode: '<form>\n</form>',
-          hints: ['Add input fields', 'Include a submit button'],
-        },
-      ],
-    },
-    {
-      type: 'css',
-      challenges: [
-        {
-          id: 'html-1',
-          title: 'Create a Form',
-          description: 'Build an HTML form',
-          initialCode: '*{ }',
-          hints: ['Add input fields', 'Include a submit button'],
-        },
-        
-      ],
-    },
-    {
-      type: 'javascript',
-      challenges: [
-        {
-          id: 'html-1',
-          title: 'Create a console',
-          description: 'console.log your name',
-          initialCode: 'console.log()',
-          hints: ['Add input fields', 'Include a submit button'],
-        },
-        
-      ],
-    },
-    // ... other files
-  ]}
-  onChange={(fileType, code) => console.log(fileType, code)}
-  onSubmit={() => console.log('Submitted')}
-/>
+ 
                   
                   {showFeedback && (
                     <div className="mt-6">
