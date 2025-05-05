@@ -180,7 +180,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({
                         func();
                         console.log = originalConsoleLog;
                         return output || 'No output';
-                      } catch (error) {
+                      } catch (error:any) {
                         return `Error: ${error.message}`;
                       }
                     })()}

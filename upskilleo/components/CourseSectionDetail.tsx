@@ -10,6 +10,7 @@ import CourseFeedback from '@/components/CourseFeedback';
 import CourseModuleTimeline from '@/components/CourseModuleTimeline';
 import { toast } from "sonner";
 import { useSearchParams } from 'next/navigation';
+import MultiLanguageCourseEditor from './MultiLanguageCourseEditor';
 
 interface KeyMoment {
   id: string;
@@ -579,7 +580,7 @@ ${keyMoment.solution.split('\n')[0]}`);
                     <p className="text-muted-foreground">{currentKeyMoment?.challenge}</p>
                   </div>
                   
-                  <CourseEditor 
+                  {/* <CourseEditor 
                     code={code} 
                     onChange={setCode} 
                     language={currentKeyMoment?.type || 'javascript'}
@@ -588,7 +589,53 @@ ${keyMoment.solution.split('\n')[0]}`);
                     onSkip={handleSkipChallenge}
                     onSubmit={handleSubmitCode}
                     height={isFullscreen ? "50vh" : "300px"}
-                  />
+                  /> */}
+
+<MultiLanguageCourseEditor
+  files={[
+    {
+      type: 'html',
+      challenges: [
+        {
+          id: 'html-1',
+          title: 'Create a Form',
+          description: 'Build an HTML form',
+          initialCode: '<form>\n</form>',
+          hints: ['Add input fields', 'Include a submit button'],
+        },
+      ],
+    },
+    {
+      type: 'css',
+      challenges: [
+        {
+          id: 'html-1',
+          title: 'Create a Form',
+          description: 'Build an HTML form',
+          initialCode: '*{ }',
+          hints: ['Add input fields', 'Include a submit button'],
+        },
+        
+      ],
+    },
+    {
+      type: 'javascript',
+      challenges: [
+        {
+          id: 'html-1',
+          title: 'Create a console',
+          description: 'console.log your name',
+          initialCode: 'console.log()',
+          hints: ['Add input fields', 'Include a submit button'],
+        },
+        
+      ],
+    },
+    // ... other files
+  ]}
+  onChange={(fileType, code) => console.log(fileType, code)}
+  onSubmit={() => console.log('Submitted')}
+/>
                   
                   {showFeedback && (
                     <div className="mt-6">

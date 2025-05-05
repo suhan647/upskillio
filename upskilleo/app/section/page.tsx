@@ -62,7 +62,7 @@ const courseModules = {
             keyMoments: [
               {
                 id: 'html-elements-1',
-                timeInSeconds: 20,
+                timeInSeconds: 10,
                 challenge: "Create a form with input fields",
                 hints: [
                   "Use the form element",
